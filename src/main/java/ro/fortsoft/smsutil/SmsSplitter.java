@@ -16,11 +16,10 @@
 
 package ro.fortsoft.smsutil;
 
-import javafx.util.Pair;
 import ro.fortsoft.smsutil.charset.GSM0338Charset;
+import ro.fortsoft.smsutil.domain.SmsParts;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static ro.fortsoft.smsutil.SmsUtils.escapeAny7BitExtendedCharsetInContent;
@@ -32,27 +31,26 @@ import static ro.fortsoft.smsutil.SmsUtils.getGsmEncoding;
 class SmsSplitter {
 
 
-    static Pair<Encoding, List<String>> splitSms(String content) {
+    static SmsParts splitSms(String content) {
         Encoding encoding = getGsmEncoding(content);
 
         if (encoding == Encoding.GSM_7BIT) {
             String escapedContent = escapeAny7BitExtendedCharsetInContent(content);
             if (content.length() <= Encoding.GSM_7BIT.getMaxLengthSinglePart()) {
-                return new Pair<Encoding, List<String>>(Encoding.GSM_7BIT,
-                        Collections.singletonList(escapedContent));
+                return new SmsParts(Encoding.GSM_7BIT, new String[] { escapedContent });
             } else {
-                return new Pair<Encoding, List<String>>(Encoding.GSM_7BIT, splitGsm7BitEncodedMessage(escapedContent));
+                return new SmsParts(Encoding.GSM_7BIT, splitGsm7BitEncodedMessage(escapedContent));
             }
         } else {
             if (content.length() <= Encoding.GSM_UNICODE.getMaxLengthSinglePart()) {
-                return new Pair<Encoding, List<String>>(Encoding.GSM_UNICODE, Collections.singletonList(content));
+                return new SmsParts(Encoding.GSM_UNICODE, new String[] {content });
             } else {
-                return new Pair<Encoding, List<String>>(Encoding.GSM_UNICODE, splitUnicodeEncodedMessage(content));
+                return new SmsParts(Encoding.GSM_UNICODE, splitUnicodeEncodedMessage(content));
             }
         }
     }
 
-    static List<String> splitGsm7BitEncodedMessage(String content) {
+    static String[] splitGsm7BitEncodedMessage(String content) {
         List<String> parts = new ArrayList<String>();
         StringBuilder contentString = new StringBuilder(content);
 
@@ -72,10 +70,10 @@ class SmsSplitter {
             }
         }
 
-        return parts;
+        return parts.toArray(new String[parts.size()]);
     }
 
-    private static List<String> splitUnicodeEncodedMessage(String content) {
+    private static String[] splitUnicodeEncodedMessage(String content) {
         List<String> parts = new ArrayList<String>();
 
         StringBuilder contentString = new StringBuilder(content);
@@ -93,7 +91,7 @@ class SmsSplitter {
             }
         }
 
-        return parts;
+        return parts.toArray(new String[parts.size()]);
     }
 
     private static boolean isMultipartSmsLastCharGsm7BitEscapeChar(String content) {

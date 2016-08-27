@@ -16,10 +16,9 @@
 
 package ro.fortsoft.smsutil;
 
-import javafx.util.Pair;
 import ro.fortsoft.smsutil.charset.GSM0338Charset;
-
-import java.util.List;
+import ro.fortsoft.smsutil.domain.Parts;
+import ro.fortsoft.smsutil.domain.SmsParts;
 
 /**
  * Utility class for SMS messages
@@ -44,18 +43,18 @@ public class SmsUtils {
      * needs to be split into
      *
      * @param content message
-     * @return Pair&lt;Encoding, number of parts&gt;
+     * @return Parts holding the number of parts and the encoding
      */
-    public static Pair<Encoding, Integer> getNumberOfParts(String content) {
+    public static Parts getNumberOfParts(String content) {
         Encoding encoding = getGsmEncoding(content);
 
         if (encoding == Encoding.GSM_7BIT) {
-            return new Pair<Encoding, Integer>(Encoding.GSM_7BIT, getNumberOfPartsFor7BitEncoding(content));
+            return new Parts(Encoding.GSM_7BIT, getNumberOfPartsFor7BitEncoding(content));
         } else {
             if (content.length() <= Encoding.GSM_UNICODE.getMaxLengthSinglePart()) {
-                return new Pair<Encoding, Integer>(Encoding.GSM_UNICODE, 1);
+                return new Parts(Encoding.GSM_UNICODE, 1);
             } else {
-                return new Pair<Encoding, Integer>(Encoding.GSM_UNICODE,
+                return new Parts(Encoding.GSM_UNICODE,
                         (int) Math.ceil(content.length() / (float) Encoding.GSM_UNICODE.getMaxLengthMultiPart()));
             }
         }
@@ -89,7 +88,7 @@ public class SmsUtils {
         }
 
         // Otherwise "manually" split the message
-        return SmsSplitter.splitGsm7BitEncodedMessage(content7bit).size();
+        return SmsSplitter.splitGsm7BitEncodedMessage(content7bit).length;
     }
 
     /**
@@ -125,7 +124,7 @@ public class SmsUtils {
      * @param message message
      * @return Pair&lt;Encoding, List &lt;String&gt;&gt; the encoding and the list of parts the sms has been split into
      */
-    public static Pair<Encoding, List<String>> splitSms(String message) {
+    public static SmsParts splitSms(String message) {
         return SmsSplitter.splitSms(message);
     }
 
