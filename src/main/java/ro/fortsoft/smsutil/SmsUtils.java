@@ -50,12 +50,12 @@ public class SmsUtils {
         Encoding encoding = getGsmEncoding(content);
 
         if (encoding == Encoding.GSM_7BIT) {
-            return new Pair<>(Encoding.GSM_7BIT, getNumberOfPartsFor7BitEncoding(content));
+            return new Pair<Encoding, Integer>(Encoding.GSM_7BIT, getNumberOfPartsFor7BitEncoding(content));
         } else {
             if (content.length() <= Encoding.GSM_UNICODE.getMaxLengthSinglePart()) {
-                return new Pair<>(Encoding.GSM_UNICODE, 1);
+                return new Pair<Encoding, Integer>(Encoding.GSM_UNICODE, 1);
             } else {
-                return new Pair<>(Encoding.GSM_UNICODE,
+                return new Pair<Encoding, Integer>(Encoding.GSM_UNICODE,
                         (int) Math.ceil(content.length() / (float) Encoding.GSM_UNICODE.getMaxLengthMultiPart()));
             }
         }

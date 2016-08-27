@@ -38,22 +38,22 @@ class SmsSplitter {
         if (encoding == Encoding.GSM_7BIT) {
             String escapedContent = escapeAny7BitExtendedCharsetInContent(content);
             if (content.length() <= Encoding.GSM_7BIT.getMaxLengthSinglePart()) {
-                return new Pair<>(Encoding.GSM_7BIT,
+                return new Pair<Encoding, List<String>>(Encoding.GSM_7BIT,
                         Collections.singletonList(escapedContent));
             } else {
-                return new Pair<>(Encoding.GSM_7BIT, splitGsm7BitEncodedMessage(escapedContent));
+                return new Pair<Encoding, List<String>>(Encoding.GSM_7BIT, splitGsm7BitEncodedMessage(escapedContent));
             }
         } else {
             if (content.length() <= Encoding.GSM_UNICODE.getMaxLengthSinglePart()) {
-                return new Pair<>(Encoding.GSM_UNICODE, Collections.singletonList(content));
+                return new Pair<Encoding, List<String>>(Encoding.GSM_UNICODE, Collections.singletonList(content));
             } else {
-                return new Pair<>(Encoding.GSM_UNICODE, splitUnicodeEncodedMessage(content));
+                return new Pair<Encoding, List<String>>(Encoding.GSM_UNICODE, splitUnicodeEncodedMessage(content));
             }
         }
     }
 
     static List<String> splitGsm7BitEncodedMessage(String content) {
-        List<String> parts = new ArrayList<>();
+        List<String> parts = new ArrayList<String>();
         StringBuilder contentString = new StringBuilder(content);
 
         int maxLengthMultipart = Encoding.GSM_7BIT.getMaxLengthMultiPart();
@@ -76,7 +76,7 @@ class SmsSplitter {
     }
 
     private static List<String> splitUnicodeEncodedMessage(String content) {
-        List<String> parts = new ArrayList<>();
+        List<String> parts = new ArrayList<String>();
 
         StringBuilder contentString = new StringBuilder(content);
 
