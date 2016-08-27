@@ -1,5 +1,6 @@
 SMS utils: Utility methods for SMS messages
 =====================================
+[![Build Status](https://travis-ci.org/balamaci/sms-utils.svg?branch=master)](https://travis-ci.org/balamaci/sms-utils)
 
 Small utility library for SMS. Can be used to determine the necessary encoding and in how many sms parts it must be split into multiple sms parts. 
 
