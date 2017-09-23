@@ -36,7 +36,7 @@ class SmsSplitter {
 
         if (encoding == Encoding.GSM_7BIT) {
             String escapedContent = escapeAny7BitExtendedCharsetInContent(content);
-            if (content.length() <= Encoding.GSM_7BIT.getMaxLengthSinglePart()) {
+            if (escapedContent.length() <= Encoding.GSM_7BIT.getMaxLengthSinglePart()) {
                 return new SmsParts(Encoding.GSM_7BIT, new String[] { escapedContent });
             } else {
                 return new SmsParts(Encoding.GSM_7BIT, splitGsm7BitEncodedMessage(escapedContent));
